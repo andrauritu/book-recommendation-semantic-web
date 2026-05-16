@@ -1,0 +1,53 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:ex="http://example.org/books#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <rdfs:Class rdf:about="http://example.org/books#Theme"/>
+  <rdfs:Class rdf:about="http://example.org/books#Book"/>
+  <rdfs:Class rdf:about="http://example.org/books#ReadingLevel"/>
+  <rdfs:Class rdf:about="http://example.org/books#User"/>
+  <rdf:Property rdf:about="http://example.org/books#preferredTheme"/>
+  <rdf:Property rdf:about="http://example.org/books#hasTheme"/>
+  <rdf:Property rdf:about="http://example.org/books#readingLevel"/>
+  <rdf:Property rdf:about="http://example.org/books#suitableFor"/>
+  <ex:User rdf:about="http://example.org/books#Bob">
+    <ex:preferredTheme>
+      <ex:Theme rdf:about="http://example.org/books#Mystery"/>
+    </ex:preferredTheme>
+    <ex:readingLevel>
+      <ex:ReadingLevel rdf:about="http://example.org/books#Beginner"/>
+    </ex:readingLevel>
+  </ex:User>
+  <ex:Book rdf:about="http://example.org/books#Dune">
+    <ex:suitableFor>
+      <ex:ReadingLevel rdf:about="http://example.org/books#Advanced"/>
+    </ex:suitableFor>
+    <ex:hasTheme>
+      <ex:Theme rdf:about="http://example.org/books#Fantasy"/>
+    </ex:hasTheme>
+    <ex:hasTheme>
+      <ex:Theme rdf:about="http://example.org/books#ScienceFiction"/>
+    </ex:hasTheme>
+    <rdfs:label>Dune</rdfs:label>
+  </ex:Book>
+  <ex:Book rdf:about="http://example.org/books#HungerGames">
+    <ex:suitableFor>
+      <ex:ReadingLevel rdf:about="http://example.org/books#Intermediate"/>
+    </ex:suitableFor>
+    <ex:hasTheme rdf:resource="http://example.org/books#Fantasy"/>
+    <ex:hasTheme rdf:resource="http://example.org/books#ScienceFiction"/>
+    <rdfs:label>Hunger Games</rdfs:label>
+  </ex:Book>
+  <ex:Book rdf:about="http://example.org/books#TheSilentPatient">
+    <ex:suitableFor rdf:resource="http://example.org/books#Intermediate"/>
+    <ex:hasTheme>
+      <ex:Theme rdf:about="http://example.org/books#Murder"/>
+    </ex:hasTheme>
+    <ex:hasTheme rdf:resource="http://example.org/books#Mystery"/>
+    <rdfs:label>The Silent Patient</rdfs:label>
+  </ex:Book>
+  <ex:User rdf:about="http://example.org/books#Alice">
+    <ex:preferredTheme rdf:resource="http://example.org/books#ScienceFiction"/>
+    <ex:readingLevel rdf:resource="http://example.org/books#Intermediate"/>
+  </ex:User>
+</rdf:RDF>

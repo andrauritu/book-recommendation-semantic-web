@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDF Book App</title>
+    <link rel="stylesheet" href="chat.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #202124;
+            background: #f6f7f9;
+        }
+
+        header {
+            padding: 18px 24px;
+            background: #ffffff;
+            border-bottom: 1px solid #d9dde3;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        main {
+            width: min(1200px, 100%);
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .toolbar,
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .toolbar {
+            margin-bottom: 16px;
+        }
+
+        .forms {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .panel {
+            background: #ffffff;
+            border: 1px solid #d9dde3;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .panel h2 {
+            margin: 0;
+            padding: 12px 14px;
+            font-size: 18px;
+            border-bottom: 1px solid #d9dde3;
+            background: #fbfcfd;
+        }
+
+        .panel-content {
+            padding: 14px;
+        }
+
+        label {
+            display: grid;
+            gap: 5px;
+            font-size: 13px;
+            color: #4d5562;
+        }
+
+        input,
+        select {
+            min-width: 160px;
+            border: 1px solid #c7ccd4;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 14px;
+            background: #ffffff;
+        }
+
+        button {
+            border: 1px solid #3267d6;
+            background: #3267d6;
+            color: white;
+            border-radius: 6px;
+            padding: 9px 14px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button.secondary {
+            color: #3267d6;
+            background: #ffffff;
+        }
+
+        button:hover {
+            filter: brightness(0.95);
+        }
+
+        .status {
+            min-height: 22px;
+            margin-bottom: 16px;
+            color: #4d5562;
+        }
+
+        .books-list {
+            display: grid;
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .books-list a {
+            color: #2457c5;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .books-list a:hover {
+            text-decoration: underline;
+        }
+
+        .books-list span {
+            color: #4d5562;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+        }
+
+        #graph {
+            display: block;
+            width: 100%;
+            height: 620px;
+            background: #ffffff;
+        }
+
+        .node circle {
+            fill: #e9f1ff;
+            stroke: #3267d6;
+            stroke-width: 2;
+        }
+
+        .node.literal circle {
+            fill: #fff4db;
+            stroke: #b97900;
+        }
+
+        .node text {
+            font-size: 12px;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: none;
+        }
+
+        .edge {
+            stroke: #7a8594;
+            stroke-width: 1.5;
+        }
+
+        .edge-label {
+            font-size: 11px;
+            fill: #525a66;
+            paint-order: stroke;
+            stroke: #ffffff;
+            stroke-width: 4px;
+            stroke-linejoin: round;
+        }
+
+        .triples {
+            height: 620px;
+            overflow: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            padding: 9px;
+            border-bottom: 1px solid #edf0f3;
+            text-align: left;
+            vertical-align: top;
+            word-break: break-word;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            background: #fbfcfd;
+            z-index: 1;
+        }
+
+        @media (max-width: 850px) {
+            .forms,
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            #graph,
+            .triples {
+                height: 460px;
+            }
+        }
+    </style>
+</head>
+<body data-page="list">
+    <header>
+        <h1>RDF Book App</h1>
+    </header>
+
+    <main>
+        <div class="toolbar">
+            <input id="fileInput" type="file" accept=".rdf,.xml,application/rdf+xml,text/xml">
+            <button id="sampleButton" type="button">Load task1.rdf</button>
+            <button id="downloadButton" class="secondary" type="button">Download RDF/XML</button>
+        </div>
+
+        <div class="forms">
+            <section class="panel">
+                <h2>Add or Modify Book</h2>
+                <div class="panel-content">
+                    <form id="bookForm">
+                        <label>
+                            Title
+                            <input id="titleInput" value="Harry Potter" required>
+                        </label>
+                        <label>
+                            Themes
+                            <input id="themesInput" value="Fantasy, Magic" required>
+                        </label>
+                        <label>
+                            Reading level
+                            <select id="levelInput">
+                                <option>Beginner</option>
+                                <option selected>Intermediate</option>
+                                <option>Advanced</option>
+                            </select>
+                        </label>
+                        <button type="submit">Save Book</button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h2>Change Reading Level</h2>
+                <div class="panel-content">
+                    <form id="levelForm">
+                        <label>
+                            Book
+                            <input id="changeTitleInput" value="Hunger Games" required>
+                        </label>
+                        <label>
+                            New level
+                            <select id="changeLevelInput">
+                                <option>Beginner</option>
+                                <option selected>Intermediate</option>
+                                <option>Advanced</option>
+                            </select>
+                        </label>
+                        <button type="submit">Change Level</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+        <div id="status" class="status">Loading RDF with Jena...</div>
+
+        <section class="panel" style="margin-bottom: 16px;">
+            <h2>Available Books</h2>
+            <div class="panel-content">
+                <ul id="bookList" class="books-list"></ul>
+            </div>
+        </section>
+
+        <div class="layout">
+            <section class="panel">
+                <h2>Graph</h2>
+                <svg id="graph" role="img" aria-label="RDF graph visualization"></svg>
+            </section>
+
+            <section class="panel triples">
+                <h2>Triples</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Predicate</th>
+                            <th>Object</th>
+                        </tr>
+                    </thead>
+                    <tbody id="triplesBody"></tbody>
+                </table>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const fileInput = document.getElementById("fileInput");
+        const sampleButton = document.getElementById("sampleButton");
+        const downloadButton = document.getElementById("downloadButton");
+        const bookForm = document.getElementById("bookForm");
+        const levelForm = document.getElementById("levelForm");
+        const statusBox = document.getElementById("status");
+        const graph = document.getElementById("graph");
+        const triplesBody = document.getElementById("triplesBody");
+        const bookList = document.getElementById("bookList");
+
+        let currentRdfXml = "";
+
+        fileInput.addEventListener("change", () => {
+            const file = fileInput.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = () => postText("/api/upload", reader.result, `Uploaded ${file.name}`);
+            reader.readAsText(file);
+        });
+
+        sampleButton.addEventListener("click", () => {
+            getJson("/api/sample", "Loaded task1.rdf");
+        });
+
+        downloadButton.addEventListener("click", () => {
+            const link = document.createElement("a");
+            const file = new Blob([currentRdfXml], { type: "application/rdf+xml" });
+            link.href = URL.createObjectURL(file);
+            link.download = "updated-books.rdf";
+            link.click();
+            URL.revokeObjectURL(link.href);
+        });
+
+        bookForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            postJson("/api/add-book", {
+                title: document.getElementById("titleInput").value,
+                themes: document.getElementById("themesInput").value.split(",").map(theme => theme.trim()),
+                readingLevel: document.getElementById("levelInput").value
+            }, "Book saved with Jena");
+        });
+
+        levelForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            postJson("/api/change-level", {
+                title: document.getElementById("changeTitleInput").value,
+                readingLevel: document.getElementById("changeLevelInput").value
+            }, "Reading level changed with Jena");
+        });
+
+        async function getJson(url, message) {
+            const response = await fetch(url);
+            update(await response.json(), message);
+        }
+
+        async function postText(url, body, message) {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/rdf+xml" },
+                body
+            });
+            update(await response.json(), message);
+        }
+
+        async function postJson(url, body, message) {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+            update(await response.json(), message);
+        }
+
+        function update(data, message) {
+            currentRdfXml = data.rdfXml;
+            drawGraph(data.triples);
+            showTriples(data.triples);
+            statusBox.textContent = `${message}. ${data.triples.length} triples found.`;
+            loadBooks();
+        }
+
+        async function loadBooks() {
+            const response = await fetch("/api/books");
+            const data = await response.json();
+            bookList.replaceChildren();
+
+            for (const book of data.books) {
+                const item = document.createElement("li");
+                const link = document.createElement("a");
+                const details = document.createElement("span");
+
+                link.href = `book.html?id=${encodeURIComponent(book.id)}`;
+                link.textContent = book.title;
+                details.textContent = ` - ${book.themes || "No theme"} - ${book.readingLevel || "No level"}`;
+
+                item.append(link, details);
+                bookList.append(item);
+            }
+        }
+
+        function showTriples(triples) {
+            triplesBody.replaceChildren();
+
+            for (const triple of triples) {
+                const row = document.createElement("tr");
+                row.append(cell(shorten(triple.subject)));
+                row.append(cell(shorten(triple.predicate)));
+                row.append(cell(shorten(triple.object)));
+                triplesBody.append(row);
+            }
+        }
+
+        function cell(value) {
+            const td = document.createElement("td");
+            td.textContent = value;
+            return td;
+        }
+
+        function drawGraph(triples) {
+            graph.replaceChildren();
+
+            const width = graph.clientWidth || 800;
+            const height = graph.clientHeight || 620;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.max(150, Math.min(width, height) / 2 - 90);
+            const nodes = createNodes(triples);
+
+            graph.setAttribute("viewBox", `0 0 ${width} ${height}`);
+            addArrowMarker();
+
+            let index = 0;
+
+            for (const node of nodes.values()) {
+                const angle = (Math.PI * 2 * index) / nodes.size;
+                node.x = centerX + Math.cos(angle) * radius;
+                node.y = centerY + Math.sin(angle) * radius;
+                index++;
+            }
+
+            for (const triple of triples) {
+                const start = nodes.get(triple.subject);
+                const end = nodes.get(triple.object);
+
+                if (start && end) {
+                    drawEdge(start, end, shorten(triple.predicate));
+                }
+            }
+
+            for (const node of nodes.values()) {
+                drawNode(node);
+            }
+        }
+
+        function createNodes(triples) {
+            const nodes = new Map();
+
+            for (const triple of triples) {
+                addNode(nodes, triple.subject, "resource");
+                addNode(nodes, triple.object, triple.objectType);
+            }
+
+            return nodes;
+        }
+
+        function addNode(nodes, id, type) {
+            if (!nodes.has(id)) {
+                nodes.set(id, { id, type });
+            }
+        }
+
+        function addArrowMarker() {
+            const defs = svgElement("defs");
+            const marker = svgElement("marker");
+            marker.setAttribute("id", "arrow");
+            marker.setAttribute("markerWidth", "10");
+            marker.setAttribute("markerHeight", "10");
+            marker.setAttribute("refX", "8");
+            marker.setAttribute("refY", "3");
+            marker.setAttribute("orient", "auto");
+
+            const path = svgElement("path");
+            path.setAttribute("d", "M0,0 L0,6 L9,3 z");
+            path.setAttribute("fill", "#7a8594");
+
+            marker.append(path);
+            defs.append(marker);
+            graph.append(defs);
+        }
+
+        function drawEdge(start, end, label) {
+            const line = svgElement("line");
+            const points = shortenLine(start, end, 42);
+
+            line.setAttribute("x1", points.x1);
+            line.setAttribute("y1", points.y1);
+            line.setAttribute("x2", points.x2);
+            line.setAttribute("y2", points.y2);
+            line.setAttribute("class", "edge");
+            line.setAttribute("marker-end", "url(#arrow)");
+            graph.append(line);
+
+            const text = svgElement("text");
+            text.textContent = label;
+            text.setAttribute("x", (start.x + end.x) / 2);
+            text.setAttribute("y", (start.y + end.y) / 2 - 6);
+            text.setAttribute("class", "edge-label");
+            graph.append(text);
+        }
+
+        function drawNode(node) {
+            const group = svgElement("g");
+            group.setAttribute("class", `node ${node.type}`);
+
+            const circle = svgElement("circle");
+            circle.setAttribute("cx", node.x);
+            circle.setAttribute("cy", node.y);
+            circle.setAttribute("r", "38");
+
+            const text = svgElement("text");
+            text.textContent = fitLabel(shorten(node.id));
+            text.setAttribute("x", node.x);
+            text.setAttribute("y", node.y);
+
+            group.append(circle, text);
+            graph.append(group);
+        }
+
+        function shortenLine(start, end, padding) {
+            const dx = end.x - start.x;
+            const dy = end.y - start.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+            const offsetX = (dx / distance) * padding;
+            const offsetY = (dy / distance) * padding;
+
+            return {
+                x1: start.x + offsetX,
+                y1: start.y + offsetY,
+                x2: end.x - offsetX,
+                y2: end.y - offsetY
+            };
+        }
+
+        function svgElement(name) {
+            return document.createElementNS("http://www.w3.org/2000/svg", name);
+        }
+
+        function shorten(value) {
+            const hashIndex = value.lastIndexOf("#");
+            const slashIndex = value.lastIndexOf("/");
+            const index = Math.max(hashIndex, slashIndex);
+            return index >= 0 ? value.slice(index + 1) : value;
+        }
+
+        function fitLabel(value) {
+            return value.length > 16 ? value.slice(0, 14) + ".." : value;
+        }
+
+        getJson("/api/sample", "Loaded task1.rdf");
+    </script>
+    <script src="chat.js"></script>
+</body>
+</html>
