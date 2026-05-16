@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <link rel="stylesheet" href="chat.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #202124;
+            background: #f6f7f9;
+        }
+
+        header {
+            padding: 18px 24px;
+            background: #ffffff;
+            border-bottom: 1px solid #d9dde3;
+        }
+
+        main {
+            width: min(900px, 100%);
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        a {
+            color: #2457c5;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .panel {
+            margin-top: 16px;
+            background: #ffffff;
+            border: 1px solid #d9dde3;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .panel h2 {
+            margin: 0;
+            padding: 12px 14px;
+            font-size: 18px;
+            border-bottom: 1px solid #d9dde3;
+            background: #fbfcfd;
+        }
+
+        .panel-content {
+            padding: 14px;
+        }
+
+        dl {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 10px;
+            margin: 0;
+        }
+
+        dt {
+            color: #4d5562;
+            font-weight: 700;
+        }
+
+        dd {
+            margin: 0;
+            word-break: break-word;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            padding: 9px;
+            border-bottom: 1px solid #edf0f3;
+            text-align: left;
+            vertical-align: top;
+            word-break: break-word;
+        }
+
+        @media (max-width: 650px) {
+            dl {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body data-page="book">
+    <header>
+        <h1 id="pageTitle">Book Details</h1>
+    </header>
+
+    <main>
+        <a href="index.html">Back to books</a>
+
+        <section class="panel">
+            <h2>Book</h2>
+            <div class="panel-content">
+                <dl>
+                    <dt>Title</dt>
+                    <dd id="title">Loading...</dd>
+                    <dt>URI</dt>
+                    <dd id="uri"></dd>
+                    <dt>Themes</dt>
+                    <dd id="themes"></dd>
+                    <dt>Reading level</dt>
+                    <dd id="readingLevel"></dd>
+                </dl>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>RDF Triples</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Predicate</th>
+                        <th>Object</th>
+                    </tr>
+                </thead>
+                <tbody id="triplesBody"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id") || "";
+
+        loadBook();
+
+        async function loadBook() {
+            const response = await fetch(`/api/book?id=${encodeURIComponent(id)}`);
+            const data = await response.json();
+            const book = data.book;
+
+            document.title = book.title;
+            document.getElementById("pageTitle").textContent = book.title;
+            document.getElementById("title").textContent = book.title;
+            document.getElementById("uri").textContent = book.uri;
+            document.getElementById("themes").textContent = book.themes || "No theme";
+            document.getElementById("readingLevel").textContent = book.readingLevel || "No level";
+            showTriples(data.triples);
+        }
+
+        function showTriples(triples) {
+            const triplesBody = document.getElementById("triplesBody");
+            triplesBody.replaceChildren();
+
+            for (const triple of triples) {
+                const row = document.createElement("tr");
+                row.append(cell(shorten(triple.subject)));
+                row.append(cell(shorten(triple.predicate)));
+                row.append(cell(shorten(triple.object)));
+                triplesBody.append(row);
+            }
+        }
+
+        function cell(value) {
+            const td = document.createElement("td");
+            td.textContent = value;
+            return td;
+        }
+
+        function shorten(value) {
+            const hashIndex = value.lastIndexOf("#");
+            const slashIndex = value.lastIndexOf("/");
+            const index = Math.max(hashIndex, slashIndex);
+            return index >= 0 ? value.slice(index + 1) : value;
+        }
+    </script>
+    <script src="chat.js"></script>
+</body>
+</html>
