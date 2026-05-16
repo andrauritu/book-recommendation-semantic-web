@@ -1,0 +1,54 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX ex: <http://example.org/book-recommendation#>
+
+# Query 1: List all books
+SELECT ?book ?title
+WHERE {
+    ?book rdf:type ex:Book .
+    OPTIONAL { ?book rdfs:label ?title . }
+}
+
+
+# Query 2: List all users with their preferred theme and reading level
+SELECT ?user ?preferredTheme ?readingLevel
+WHERE {
+    ?user rdf:type ex:User .
+    ?user ex:hasPreferredTheme ?preferredTheme .
+    ?user ex:hasReadingLevel ?readingLevel .
+}
+
+
+# Query 3: List each book with its themes and reading level
+SELECT ?book ?title ?theme ?readingLevel
+WHERE {
+    ?book rdf:type ex:Book .
+    OPTIONAL { ?book rdfs:label ?title . }
+    ?book ex:hasTheme ?theme .
+    ?book ex:suitableForReadingLevel ?readingLevel .
+}
+
+
+# Query 4: Find books that match Alice's preferred theme
+SELECT ?book ?title ?theme
+WHERE {
+    ex:Alice ex:hasPreferredTheme ?theme .
+    ?book rdf:type ex:Book .
+    ?book ex:hasTheme ?theme .
+    OPTIONAL { ?book rdfs:label ?title . }
+}
+
+
+# Query 5: Find recommended books by matching both theme and reading level
+SELECT ?user ?book ?title
+WHERE {
+    ?user rdf:type ex:User .
+    ?user ex:hasPreferredTheme ?theme .
+    ?user ex:hasReadingLevel ?level .
+
+    ?book rdf:type ex:Book .
+    ?book ex:hasTheme ?theme .
+    ?book ex:suitableForReadingLevel ?level .
+    OPTIONAL { ?book rdfs:label ?title . }
+}
