@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library>
+    <users>
+        <user id="Alice">
+            <readingLevel>Intermediate</readingLevel>
+            <preferredTheme>Science Fiction</preferredTheme>
+        </user>
+        <user id="Bob">
+            <readingLevel>Beginner</readingLevel>
+            <preferredTheme>Mystery</preferredTheme>
+        </user>
+    </users>
+
+    <books>
+        <book id="Dune">
+            <title>Dune</title>
+            <author>Frank Herbert</author>
+            <theme>Science Fiction</theme>
+            <theme>Fantasy</theme>
+            <readingLevel>Advanced</readingLevel>
+        </book>
+        <book id="TheSilentPatient">
+            <title>The Silent Patient</title>
+            <author>Alex Michaelides</author>
+            <theme>Mystery</theme>
+            <theme>Murder</theme>
+            <readingLevel>Intermediate</readingLevel>
+        </book>
+        <book id="HungerGames">
+            <title>Hunger Games</title>
+            <author>Suzanne Collins</author>
+            <theme>Science Fiction</theme>
+            <theme>Fantasy</theme>
+            <readingLevel>Beginner</readingLevel>
+        </book>
+        <book id="HarryPotter">
+            <title>Harry Potter</title>
+            <author>Gigel</author>
+            <theme>Fantasy</theme>
+            <theme>Magic</theme>
+            <readingLevel>Intermediate</readingLevel>
+        </book>
+    </books>
+</library>

@@ -1,0 +1,4 @@
+Dune -> {frank=1.0, themes=1.0, fantasy=1.0, fiction=1.0, level=1.0, advanced=1.0, author=1.0, dune=1.0, science=1.0, reading=1.0, title=1.0, herbert=1.0}
+The Silent Patient -> {murder=1.0, silent=1.0, level=1.0, author=1.0, reading=1.0, title=1.0, the=1.0, themes=1.0, alex=1.0, mystery=1.0, patient=1.0, intermediate=1.0, michaelides=1.0}
+Hunger Games -> {fantasy=1.0, suzanne=1.0, fiction=1.0, level=1.0, author=1.0, reading=1.0, title=1.0, hunger=1.0, themes=1.0, collins=1.0, beginner=1.0, science=1.0, games=1.0}
+Harry Potter -> {gigel=1.0, magic=1.0, themes=1.0, fantasy=1.0, level=1.0, author=1.0, harry=1.0, intermediate=1.0, reading=1.0, title=1.0, potter=1.0}
